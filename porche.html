@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porsche - Luxury Redefined</title>
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #1a1a1a;
+            --accent-red: #d5001c;
+            --pure-white: #ffffff;
+            --light-gray: #e0e0e0;
+            --dark-gray: #2a2a2a;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-black);
+            color: var(--pure-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== CURSOR FOLLOWER ===== */
+        .cursor-follower {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-red);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease-out, opacity 0.3s;
+            opacity: 0;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: padding 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 1rem 5%;
+            box-shadow: 0 2px 20px rgba(213, 0, 28, 0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--pure-white);
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .logo span {
+            color: var(--accent-red);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+        }
+
+        .nav-links a {
+            color: var(--pure-white);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        /* Animated underline effect */
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-red);
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-red);
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--pure-white);
+            transition: all 0.3s ease;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-black) 0%, var(--secondary-black) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(213, 0, 28, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(213, 0, 28, 0.05) 0%, transparent 50%);
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            max-width: 900px;
+            padding: 0 2rem;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.3s;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--light-gray);
+            margin-bottom: 3rem;
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+        }
+
+        .cta-button {
+            padding: 1rem 3rem;
+            background: var(--accent-red);
+            color: var(--pure-white);
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.9s;
+        }
+
+        /* Ripple effect */
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(213, 0, 28, 0.4);
+        }
+
+        .cta-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== CARS SECTION ===== */
+        .cars-section {
+            padding: 8rem 5%;
+            background: var(--primary-black);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .section-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--light-gray);
+            font-size: 1.2rem;
+            margin-bottom: 5rem;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease 0.2s;
+        }
+
+        .section-subtitle.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .car-card {
+            background: var(--secondary-black);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.5s ease;
+            border: 1px solid transparent;
+        }
+
+        .car-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .car-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--accent-red);
+            box-shadow: 0 20px 50px rgba(213, 0, 28, 0.3);
+        }
+
+        .car-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .car-card:hover .car-image {
+            transform: scale(1.1);
+        }
+
+        .car-info {
+            padding: 2rem;
+            position: relative;
+        }
+
+        .car-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .car-description {
+            color: var(--light-gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .car-specs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .spec-item {
+            text-align: center;
+        }
+
+        .spec-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-red);
+        }
+
+        .spec-label {
+            color: var(--light-gray);
+            font-size: 0.85rem;
+        }
+
+        .explore-btn {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 2px solid var(--accent-red);
+            color: var(--pure-white);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .explore-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-red);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .explore-btn:hover::before {
+            left: 0;
+        }
+
+        .explore-btn:hover {
+            color: var(--pure-white);
+            box-shadow: 0 5px 20px rgba(213, 0, 28, 0.4);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--secondary-black);
+            padding: 4rem 5%;
+            text-align: center;
+            border-top: 1px solid var(--dark-gray);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            transform: translateY(-5px) rotate(360deg);
+        }
+
+        .copyright {
+            color: var(--light-gray);
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                background: var(--secondary-black);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: right 0.4s ease;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .menu-toggle {
+                display: flex;
+                z-index: 1001;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .cars-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .cursor-follower {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .car-specs {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cursor Follower -->
+    <div class="cursor-follower"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="logo">PORSCHE<span>.</span></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#models">Models</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="menu-toggle" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>DRIVE THE LEGEND</h1>
+            <p class="hero-subtitle">Experience Pure Engineering Excellence</p>
+            <button class="cta-button"><span>Explore Collection</span></button>
+        </div>
+    </section>
+
+    <!-- Cars Section -->
+    <section class="cars-section" id="models">
+        <h2 class="section-title">Our Collection</h2>
+        <p class="section-subtitle">Masterpieces of Engineering</p>
+        
+        <div class="cars-grid">
+            <!-- Porsche 911 -->
+            <div class="car-card">
+                <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80" alt="Porsche 911" class="car-image">
+                <div class="car-info">
+                    <h3 class="car-name">911 Carrera</h3>
+                    <p class="car-description">The iconic sports car that defines the Porsche legacy. Pure performance meets timeless design.</p>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-value">450</div>
+                            <div class="spec-label">HP</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">3.8s</div>
+                            <div class="spec-label">0-60 MPH</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">191</div>
+                            <div class="spec-label">MPH Top</div>
+                        </div>
+                    </div>
+                    <button class="explore-btn">Explore Model</button>
+                </div>
+            </div>
+
+            <!-- Porsche Taycan -->
+            <div class="car-card">
+                <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=800&q=80" alt="Porsche Taycan" class="car-image">
+                <div class="car-info">
+                    <h3 class="car-name">Taycan Turbo S</h3>
+                    <p class="car-description">Electric soul, Porsche DNA. The future of performance with zero emissions.</p>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-value">750</div>
+                            <div class="spec-label">HP</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">2.6s</div>
+                            <div class="spec-label">0-60 MPH</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">161</div>
+                            <div class="spec-label">MPH Top</div>
+                        </div>
+                    </div>
+                    <button class="explore-btn">Explore Model</button>
+                </div>
+            </div>
+
+            <!-- Porsche Cayenne -->
+            <div class="car-card">
+                <img src="https://images.unsplash.com/photo-1619405399517-d7fce0f13302?w=800&q=80" alt="Porsche Cayenne" class="car-image">
+                <div class="car-info">
+                    <h3 class="car-name">Cayenne Turbo GT</h3>
+                    <p class="car-description">The sports car among SUVs. Luxury, space, and uncompromising performance.</p>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-value">631</div>
+                            <div class="spec-label">HP</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">3.1s</div>
+                            <div class="spec-label">0-60 MPH</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">186</div>
+                            <div class="spec-label">MPH Top</div>
+                        </div>
+                    </div>
+                    <button class="explore-btn">Explore Model</button>
+                </div>
+            </div>
+
+            <!-- Porsche Panamera -->
+            <div class="car-card">
+                <img src="https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=800&q=80" alt="Porsche Panamera" class="car-image">
+                <div class="car-info">
+                    <h3 class="car-name">Panamera Turbo S</h3>
+                    <p class="car-description">Four doors, four seats, unlimited possibilities. Executive luxury with racing DNA.</p>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-value">620</div>
+                            <div class="spec-label">HP</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">3.0s</div>
+                            <div class="spec-label">0-60 MPH</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">196</div>
+                            <div class="spec-label">MPH Top</div>
+                        </div>
+                    </div>
+                    <button class="explore-btn">Explore Model</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="logo" style="margin-bottom: 1rem;">PORSCHE<span>.</span></div>
+            <p style="color: var(--light-gray); margin-bottom: 1rem;">Engineered for Excellence</p>
+            
+            <div class="social-links">
+                <a href="#" class="social-icon">f</a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">i</a>
+                <a href="#" class="social-icon">y</a>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 Porsche AG. All rights reserved. | Designed with Passion
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== CURSOR FOLLOWER =====
+        const cursorFollower = document.querySelector('.cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursorFollower.style.opacity = '1';
+            cursorFollower.style.left = e.clientX + 'px';
+            cursorFollower.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mouseleave', () => {
+            cursorFollower.style.opacity = '0';
+        });
+
+        // ===== MOBILE MENU TOGGLE =====
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // ===== NAVBAR SCROLL EFFECT =====
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ===== INTERSECTION OBSERVER FOR ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100); // Stagger animation
+                }
+            });
+        }, observerOptions);
+
+        // Observe section titles
+        document.querySelectorAll('.section-title, .section-subtitle').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Observe car cards with stagger
+        const carCards = document.querySelectorAll('.car-card');
+        carCards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+            observer.observe(card);
+        });
+
+        // ===== RIPPLE EFFECT ON BUTTONS =====
+        document.querySelectorAll('.cta-button, .explore-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // ===== SMOOTH SCROLL FOR CTA BUTTON =====
+        document.querySelector('.cta-button').addEventListener('click', () => {
+            document.getElementById('models').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ===== PARALLAX EFFECT ON HERO =====
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroContent = document.querySelector('.hero-content');
+            if (heroContent) {
+                heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+                heroContent.style.opacity = 1 - (scrolled * 0.002);
+            }
+        });
+
+        // ===== HOVER EFFECT ON CAR CARDS =====
+        carCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // ===== PERFORMANCE OPTIMIZATION =====
+        // Lazy loading images
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src || img.src;
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.car-image').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+    </script>
+</body>
+</html>
